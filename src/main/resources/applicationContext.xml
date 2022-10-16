@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+<!-- the outer-file inclusion with values for setters -->
+    <context:property-placeholder location="classpath:musicPlayer.properties" />
+
+<!-- MUSIC -->
+
+    <!-- 1) a bean for the music == RockMusic -->
+    <bean id="mymusic1" class="org.example2.RockMusic">
+    </bean>
+
+    <!-- 2) a bean for the music == ClassicalMusic, + init- / destroy- methods -->
+    <bean id="mymusic2" class="org.example2.ClassicalMusic"
+        init-method="myInit"
+        destroy-method="myDestroy">
+    </bean>
+
+    <!-- 3) a bean for the music == ModernMusic, + factory-method, + noted scope -->
+    <bean id="mymusic3" class="org.example2.ModernMusic"
+          factory-method="getModernMusic"
+            scope="prototype">
+    </bean>
+
+<!-- PLAYER -->
+
+<!-- 1) the scope == singleton [default] + the bean into constructor -->
+    <bean id="myplayer1" class="org.example2.MusicPlayer"><!-- scope="singleton" -->
+        <constructor-arg ref="mymusic1"/>
+    </bean>
+
+<!-- 2) the scope == prototype + some setters -->
+    <bean id="myplayer2" class="org.example2.MusicPlayer" scope="prototype">
+        <property name="music" ref="mymusic2" />
+        <property name="name" value="My Big Player" />
+        <property name="volume" value="10" />
+    </bean>
+
+<!-- 3) the scope == prototype + the outer-file with values for setters -->
+    <bean id="myplayer3" class="org.example2.MusicPlayer" scope="prototype">
+        <property name="music" ref="mymusic2" />
+        <property name="name" value="${musicPlayer.name}" />
+        <property name="volume" value="${musicPlayer.volume}" />
+    </bean>
+</beans>
